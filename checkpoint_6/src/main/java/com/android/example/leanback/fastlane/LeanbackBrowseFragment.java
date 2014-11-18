@@ -17,7 +17,10 @@
 package com.android.example.leanback.fastlane;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
@@ -32,6 +35,7 @@ import android.support.v17.leanback.widget.RowPresenter;
 import android.widget.Toast;
 
 import com.android.example.leanback.R;
+import com.android.example.leanback.data.AvatarService;
 import com.android.example.leanback.data.Gde;
 import com.android.example.leanback.data.GdeObjectAdapter;
 import com.android.example.leanback.data.HubApiResponse;
@@ -146,11 +150,32 @@ public class LeanbackBrowseFragment extends BrowseFragment implements Callback<H
 
     @Override
     public void success(HubApiResponse<Gde> gdeHubApiResponse, Response response) {
+        AvatarService.start(getActivity(), gdeHubApiResponse.getItems());
         init(convertToVeryHelpfulMap(gdeHubApiResponse));
     }
 
     @Override
     public void failure(RetrofitError error) {
         Toast.makeText(getActivity(), error.getResponse().getReason() + ": " + error.getResponse().getStatus(), Toast.LENGTH_LONG).show();
+    }
+
+    private final BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mRowsAdapter.notifyArrayItemRangeChanged(0, mRowsAdapter.size());
+        }
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter(AvatarService.MY_SUPER_ACTION);
+        getActivity().registerReceiver(myReceiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(myReceiver);
+        super.onPause();
     }
 }

@@ -12,6 +12,10 @@ public class Gde {
     @SerializedName("_id")
     private final String id;
 
+    public String getId() {
+        return id;
+    }
+
     private Country country;
 
     private Geo geo;

@@ -17,10 +17,12 @@
 package com.android.example.leanback.fastlane;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.support.v17.leanback.widget.ImageCardView;
 import android.support.v17.leanback.widget.Presenter;
 import android.util.Log;
@@ -29,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.example.leanback.R;
+import com.android.example.leanback.data.AvatarService;
 import com.android.example.leanback.data.Gde;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -106,13 +109,17 @@ public class CardPresenter extends Presenter {
             .add("Mario Viviani")
             .build();
 
+    private SharedPreferences prefs;
+
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object o) {
         Gde gde = (Gde) o;
         ((ViewHolder) viewHolder).mCardView.setTitleText(gde.getName());
         ((ViewHolder) viewHolder).mCardView.setContentText(WHITELIST_COOLEST_GUYS_EVER.contains(gde.getName()) || random.nextBoolean() ? "COOL GUY!" : "LESS COOL GUY, BUT STILL FINE");
         ((ViewHolder) viewHolder).mCardView.setMainImageDimensions(CARD_WIDTH * 2, CARD_HEIGHT * 2);
-        ((ViewHolder) viewHolder).updateCardViewImage(URLS.get(Math.abs(random.nextInt()) % 3));
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String url = prefs.getString(AvatarService.buildPreferenceKeyForId(gde.getId()), "http://www.thedivaofdating.com/wp-content/uploads/2012/06/profile_person_generic.jpg");
+        ((ViewHolder) viewHolder).updateCardViewImage(url);
     }
 
     @Override

@@ -24,10 +24,10 @@ public class PlusPhotoInfo {
         this.cover = cover;
     }
 
-    private class Image {
+    public static  class Image {
         private final String url;
 
-        private Image(String url) {
+        public Image(String url) {
             this.url = url;
         }
 

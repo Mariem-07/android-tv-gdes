@@ -9,6 +9,9 @@ import retrofit.http.Path;
  */
 public interface GoogleAvatarService {
 
-    @GET("/plus/v1/people/{plusId}?fields=cover%2FcoverPhoto%2Furl%2Cimage&key=AIzaSyBkHUlp6Y4i2xPXmX1_HypE9YpAREpSqUg")
+    @GET("/people/{plusId}?fields=cover%2FcoverPhoto%2Furl%2Cimage&key=AIzaSyBkHUlp6Y4i2xPXmX1_HypE9YpAREpSqUg")
     public void getUserImageStuff(@Path("plusId") String plusId, Callback<PlusPhotoInfo> callback);
+
+    @GET("/people/{plusId}?fields=cover%2FcoverPhoto%2Furl%2Cimage&key=AIzaSyBkHUlp6Y4i2xPXmX1_HypE9YpAREpSqUg")
+    public PlusPhotoInfo getUserImageStuff(@Path("plusId") String plusId);
 }
