@@ -15,4 +15,7 @@ public interface HubApiService {
 
     @GET("/gdes/product/{productCode}")
     public void getGdeByProduct(String productCode, Callback<HubApiResponse<Gde>> callback);
+
+    @GET("/gdes?perpage=1000")
+    public void getAllGdes(Callback<HubApiResponse<Gde>> callback);
 }
