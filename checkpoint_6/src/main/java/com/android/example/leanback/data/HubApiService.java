@@ -10,8 +10,8 @@ import retrofit.http.GET;
  */
 public interface HubApiService {
 
-   @GET("/gdes/products")
-   public void getGdeCategories(Callback<ArrayList<GdeProduct>> callback);
+    @GET("/gdes/products")
+    public void getGdeCategories(Callback<ArrayList<GdeProduct>> callback);
 
     @GET("/gdes/product/{productCode}")
     public void getGdeByProduct(String productCode, Callback<HubApiResponse<Gde>> callback);
