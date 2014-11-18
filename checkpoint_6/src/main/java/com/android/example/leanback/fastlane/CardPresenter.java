@@ -29,9 +29,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.example.leanback.R;
-import com.android.example.leanback.data.Video;
+import com.android.example.leanback.data.Gde;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+
+import java.util.Random;
 
 /**
  * Created by anirudhd on 11/2/14.
@@ -82,17 +84,19 @@ public class CardPresenter extends Presenter {
         ImageCardView cardView = new ImageCardView(mContext);
         cardView.setFocusable(true);
         cardView.setFocusableInTouchMode(true);
-        ((TextView)cardView.findViewById(R.id.content_text)).setTextColor(Color.LTGRAY);
+        ((TextView) cardView.findViewById(R.id.content_text)).setTextColor(Color.LTGRAY);
         return new ViewHolder(cardView);
     }
 
+    private Random random = new Random();
+
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object o) {
-        Video video = (Video) o;
-        ((ViewHolder) viewHolder).mCardView.setTitleText(video.getTitle());
-        ((ViewHolder) viewHolder).mCardView.setContentText(video.getDescription());
-      ((ViewHolder) viewHolder).mCardView.setMainImageDimensions(CARD_WIDTH * 2 , CARD_HEIGHT * 2);
-        ((ViewHolder) viewHolder).updateCardViewImage(video.getThumbUrl());
+        Gde gde = (Gde) o;
+        ((ViewHolder) viewHolder).mCardView.setTitleText(gde.getName());
+        ((ViewHolder) viewHolder).mCardView.setContentText(random.nextBoolean() ? "COOL GUY!" : "FAGGOT");
+        ((ViewHolder) viewHolder).mCardView.setMainImageDimensions(CARD_WIDTH * 2, CARD_HEIGHT * 2);
+        ((ViewHolder) viewHolder).updateCardViewImage("https://openclipart.org/image/2400px/svg_to_png/167281/generic-avatar.png");
     }
 
     @Override

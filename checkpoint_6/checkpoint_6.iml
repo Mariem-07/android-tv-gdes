@@ -88,10 +88,13 @@
     <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="picasso-2.3.4" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="retrofit-1.7.1" level="project" />
     <orderEntry type="library" exported="" name="library" level="project" />
     <orderEntry type="library" exported="" name="leanback-v17-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v13-21.0.0" level="project" />
+    <orderEntry type="library" exported="" name="guava-18.0" level="project" />
   </component>
 </module>
 

@@ -17,74 +17,86 @@
 package com.android.example.leanback.fastlane;
 
 
-import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v17.leanback.app.BackgroundManager;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.CursorObjectAdapter;
 import android.support.v17.leanback.widget.HeaderItem;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
-import android.support.v17.leanback.widget.ObjectAdapter;
 import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.OnItemViewSelectedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
-import android.support.v17.leanback.widget.SinglePresenterSelector;
-import android.util.DisplayMetrics;
-import android.view.View;
+import android.widget.Toast;
 
 import com.android.example.leanback.R;
+import com.android.example.leanback.data.Gde;
+import com.android.example.leanback.data.GdeObjectAdapter;
+import com.android.example.leanback.data.HubApiResponse;
+import com.android.example.leanback.data.HubApiService;
 import com.android.example.leanback.data.Video;
-import com.android.example.leanback.data.VideoDataManager;
-import com.android.example.leanback.data.VideoItemContract;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.internal.bind.DateTypeAdapter;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
 
 
 /**
  * A simple {@link android.app.Fragment} subclass.
  */
-public class LeanbackBrowseFragment extends BrowseFragment {
+public class LeanbackBrowseFragment extends BrowseFragment implements Callback<HubApiResponse<Gde>> {
 
     private ArrayObjectAdapter mRowsAdapter;
     private BackgroundHelper bgHelper;
 
-    private static final String[] HEADERS = new String[]{
-        "Featured", "Popular","Editor's choice"
-    };
-
-
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        init();
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Gson gson = new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(Date.class, new DateTypeAdapter())
+                .create();
+
+        RestAdapter restAdapter = new RestAdapter.Builder()
+                .setEndpoint("https://hub.gdgx.io/api/v1/")
+                .setConverter(new GsonConverter(gson))
+                .build();
+
+        HubApiService hubApiService = restAdapter.create(HubApiService.class);
+        hubApiService.getAllGdes(this);
     }
 
-    public void init() {
+    public void init(Multimap<String, Gde> gdeProducts) {
+
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         setAdapter(mRowsAdapter);
 
         setBrandColor(getResources().getColor(R.color.primary));
         setBadgeDrawable(getResources().getDrawable(R.drawable.filmi));
 
+        int position = 0;
+        Set<Map.Entry<String, Collection<Gde>>> entries = gdeProducts.asMap().entrySet();
+        for (Map.Entry<String, Collection<Gde>> entry : entries) {
 
-        for (int position = 0; position < HEADERS.length; position++) {
-            ObjectAdapter rowContents = new CursorObjectAdapter((new SinglePresenterSelector(new CardPresenter())));
-            VideoDataManager manager = new VideoDataManager(getActivity(), getLoaderManager(), VideoItemContract.VideoItem.buildDirUri(), rowContents );
-            manager.startDataLoading();
-
-            HeaderItem headerItem = new HeaderItem(position, HEADERS[position], null);
-            mRowsAdapter.add(new ListRow(headerItem, manager.getItemList()));
+            HeaderItem headerItem = new HeaderItem(position++, entry.getKey(), null);
+            mRowsAdapter.add(new ListRow(headerItem, new GdeObjectAdapter(new CardPresenter(), entry.getValue())));
         }
-
 
         setOnItemViewClickedListener(getDefaultItemViewClickedListener());
         setOnItemViewSelectedListener(getDefaultItemSelectedListener());
@@ -101,7 +113,7 @@ public class LeanbackBrowseFragment extends BrowseFragment {
             public void onItemClicked(Presenter.ViewHolder viewHolder, Object o, RowPresenter.ViewHolder viewHolder2, Row row) {
 
                 Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
-                intent.putExtra(Video.INTENT_EXTRA_VIDEO, (Serializable)o);
+                intent.putExtra(Video.INTENT_EXTRA_VIDEO, (Serializable) o);
                 startActivity(intent);
 
             }
@@ -122,4 +134,23 @@ public class LeanbackBrowseFragment extends BrowseFragment {
         };
     }
 
+    private Multimap<String, Gde> convertToVeryHelpfulMap(HubApiResponse<Gde> gdeHubApiResponse) {
+        LinkedHashMultimap<String, Gde> multimap = LinkedHashMultimap.create();
+        for (Gde gde : gdeHubApiResponse.getItems()) {
+            for (String productCategory : gde.getProducts()) {
+                multimap.put(productCategory, gde);
+            }
+        }
+        return multimap;
+    }
+
+    @Override
+    public void success(HubApiResponse<Gde> gdeHubApiResponse, Response response) {
+        init(convertToVeryHelpfulMap(gdeHubApiResponse));
+    }
+
+    @Override
+    public void failure(RetrofitError error) {
+        Toast.makeText(getActivity(), error.getResponse().getReason() + ": " + error.getResponse().getStatus(), Toast.LENGTH_LONG).show();
+    }
 }
