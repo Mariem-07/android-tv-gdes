@@ -112,7 +112,7 @@ public class CardPresenter extends Presenter {
         ((ViewHolder) viewHolder).mCardView.setTitleText(gde.getName());
         ((ViewHolder) viewHolder).mCardView.setContentText(WHITELIST_COOLEST_GUYS_EVER.contains(gde.getName()) || random.nextBoolean() ? "COOL GUY!" : "LESS COOL GUY, BUT STILL FINE");
         ((ViewHolder) viewHolder).mCardView.setMainImageDimensions(CARD_WIDTH * 2, CARD_HEIGHT * 2);
-        ((ViewHolder) viewHolder).updateCardViewImage(URLS.get(random.nextInt() % 3));
+        ((ViewHolder) viewHolder).updateCardViewImage(URLS.get(Math.abs(random.nextInt()) % 3));
     }
 
     @Override
