@@ -30,10 +30,12 @@ import android.widget.TextView;
 
 import com.android.example.leanback.R;
 import com.android.example.leanback.data.Gde;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -41,6 +43,12 @@ import java.util.Set;
  * Created by anirudhd on 11/2/14.
  */
 public class CardPresenter extends Presenter {
+
+    private static final List<String> URLS = ImmutableList.<String>builder()
+            .add("https://lh5.googleusercontent.com/-xnsI3zTW6mo/AAAAAAAAAAI/AAAAAAAADnU/aVuD4Jp3YIY/photo.jpg")
+            .add("http://blog.klarmobil.de/wp-content/uploads/2012/12/Sebastian-Mauer.jpg")
+            .add("http://bergamo.talentgarden.org/wp-content/uploads/sites/2/2013/05/mario-viviani-talent-garden-startuplive.jpg")
+            .build();
 
     private static int CARD_WIDTH = 200;
     private static int CARD_HEIGHT = 200;
@@ -104,7 +112,7 @@ public class CardPresenter extends Presenter {
         ((ViewHolder) viewHolder).mCardView.setTitleText(gde.getName());
         ((ViewHolder) viewHolder).mCardView.setContentText(WHITELIST_COOLEST_GUYS_EVER.contains(gde.getName()) || random.nextBoolean() ? "COOL GUY!" : "LESS COOL GUY, BUT STILL FINE");
         ((ViewHolder) viewHolder).mCardView.setMainImageDimensions(CARD_WIDTH * 2, CARD_HEIGHT * 2);
-        ((ViewHolder) viewHolder).updateCardViewImage("http://blog.klarmobil.de/wp-content/uploads/2012/12/Sebastian-Mauer.jpg");
+        ((ViewHolder) viewHolder).updateCardViewImage(URLS.get(random.nextInt() % 3));
     }
 
     @Override
