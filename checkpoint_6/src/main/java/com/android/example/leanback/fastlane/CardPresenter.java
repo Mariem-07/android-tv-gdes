@@ -30,10 +30,12 @@ import android.widget.TextView;
 
 import com.android.example.leanback.R;
 import com.android.example.leanback.data.Gde;
+import com.google.common.collect.ImmutableSet;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by anirudhd on 11/2/14.
@@ -90,13 +92,19 @@ public class CardPresenter extends Presenter {
 
     private Random random = new Random();
 
+    private Set<String> WHITELIST_COOLEST_GUYS_EVER = ImmutableSet.<String>builder()
+            .add("Sebastian Mauer")
+            .add("Mateusz Herych")
+            .add("Mario Viviani")
+            .build();
+
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object o) {
         Gde gde = (Gde) o;
         ((ViewHolder) viewHolder).mCardView.setTitleText(gde.getName());
-        ((ViewHolder) viewHolder).mCardView.setContentText(random.nextBoolean() ? "COOL GUY!" : "FAGGOT");
+        ((ViewHolder) viewHolder).mCardView.setContentText(WHITELIST_COOLEST_GUYS_EVER.contains(gde.getName()) || random.nextBoolean() ? "COOL GUY!" : "LESS COOL GUY, BUT STILL FINE");
         ((ViewHolder) viewHolder).mCardView.setMainImageDimensions(CARD_WIDTH * 2, CARD_HEIGHT * 2);
-        ((ViewHolder) viewHolder).updateCardViewImage("https://openclipart.org/image/2400px/svg_to_png/167281/generic-avatar.png");
+        ((ViewHolder) viewHolder).updateCardViewImage("http://blog.klarmobil.de/wp-content/uploads/2012/12/Sebastian-Mauer.jpg");
     }
 
     @Override
